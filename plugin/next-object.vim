@@ -99,15 +99,20 @@ function! s:SelectNextObject(openChar, closeChar, motion, dir)
 
         if lineStr[lineCol] ==# firstChar
 
-            " TODO: fix this to work with multiple matches per line
-            "if a:openChar ==# a:closeChar
-                "if matchCount > 0
-                    "break
-                "endif
-                "let matchCount = matchCount + 1
-            "else
+            if a:openChar ==# a:closeChar
+
+                let cnt = s:CountCharsInFront(a:openChar, lineCol, lineStr)
+
+                if cnt % 2
+                    " Odd number in front, so stop
+                    break
+                elseif cnt > 0
+                    " Repeat on current line 
+                    continue
+                endif
+            else
                 break
-            "endif
+            endif
         endif
 
         if (goForward && line('.') ==# line('$')) || (!goForward && line('.') == 1)
