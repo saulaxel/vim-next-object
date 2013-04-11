@@ -17,15 +17,21 @@ noremap <plug>InnerNextMap :<c-u>call <SID>NextTextObject('i', 'f', 'InnerNextMa
 noremap <plug>AroundLastMap :<c-u>call <SID>NextTextObject('a', 'F', 'AroundLastMap')<cr>
 noremap <plug>InnerLastMap :<c-u>call <SID>NextTextObject('i', 'F', 'InnerLastMap')<cr>
 
-omap an <plug>AroundNextMap
-xmap an <plug>AroundNextMap
-omap in <plug>InnerNextMap
-xmap in <plug>InnerNextMap
+nmap ]a <plug>AroundNextMap
+omap ]a <plug>AroundNextMap
+xmap ]a <plug>AroundNextMap
 
-omap al <plug>AroundLastMap
-xmap al <plug>AroundLastMap
-omap il <plug>InnerLastMap
-xmap il <plug>InnerLastMap
+nmap ]i <plug>InnerNextMap
+omap ]i <plug>InnerNextMap
+xmap ]i <plug>InnerNextMap
+
+nmap [a <plug>AroundLastMap
+omap [a <plug>AroundLastMap
+xmap [a <plug>AroundLastMap
+
+nmap [i <plug>InnerLastMap
+omap [i <plug>InnerLastMap
+xmap [i <plug>InnerLastMap
 
 function! s:NextTextObject(motion, dir, plugName)
     let c = nr2char(getchar())
