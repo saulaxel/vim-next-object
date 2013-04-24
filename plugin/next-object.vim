@@ -12,10 +12,10 @@
 "                                                      C
 "                                                      foo = bar('')
 
-noremap <plug>AroundNextMap :<c-u>call <SID>NextTextObject('a', 'f', 'AroundNextMap')<cr>
-noremap <plug>InnerNextMap :<c-u>call <SID>NextTextObject('i', 'f', 'InnerNextMap')<cr>
-noremap <plug>AroundLastMap :<c-u>call <SID>NextTextObject('a', 'F', 'AroundLastMap')<cr>
-noremap <plug>InnerLastMap :<c-u>call <SID>NextTextObject('i', 'F', 'InnerLastMap')<cr>
+noremap <silent> <plug>AroundNextMap :<c-u>call <SID>NextTextObject('a', 'f', 'AroundNextMap')<cr>
+noremap <silent> <plug>InnerNextMap :<c-u>call <SID>NextTextObject('i', 'f', 'InnerNextMap')<cr>
+noremap <silent> <plug>AroundLastMap :<c-u>call <SID>NextTextObject('a', 'F', 'AroundLastMap')<cr>
+noremap <silent> <plug>InnerLastMap :<c-u>call <SID>NextTextObject('i', 'F', 'InnerLastMap')<cr>
 
 omap an <plug>AroundNextMap
 xmap an <plug>AroundNextMap
