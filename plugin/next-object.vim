@@ -161,6 +161,5 @@ function! s:SelectNextObject(openChar, closeChar, motion, dir)
         endif
     endif
 
-    exe 'SSU'
     exe "normal! v".a:motion.a:openChar
 endfunction
