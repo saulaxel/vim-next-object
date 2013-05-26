@@ -6,9 +6,14 @@ This Vim plugin allows you to search forwards or backwards text objects rather t
 Works for the following text objects:
 (, [, {, ', "
 
- Example:
- din'  -> delete in next single quotes                foo = bar('spam')
- C
- foo = bar('')
+Input:
+ 
+    din'  -> delete in next single quotes                
+
+Result:
+
+    foo = bar('spam')
+    C
+    foo = bar('')
 
 
