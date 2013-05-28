@@ -12,10 +12,13 @@
 "                                                      C
 "                                                      foo = bar('')
 
-noremap <silent> <plug>AroundNextMap :<c-u>call <SID>NextTextObject('a', 'f', 'AroundNextMap')<cr>
-noremap <silent> <plug>InnerNextMap :<c-u>call <SID>NextTextObject('i', 'f', 'InnerNextMap')<cr>
-noremap <silent> <plug>AroundLastMap :<c-u>call <SID>NextTextObject('a', 'F', 'AroundLastMap')<cr>
-noremap <silent> <plug>InnerLastMap :<c-u>call <SID>NextTextObject('i', 'F', 'InnerLastMap')<cr>
+noremap <silent> <plug>AroundNextMap :<c-u>call <SID>NextTextObject('a', 'f', 'AroundNextMap', '')<cr>
+noremap <silent> <plug>InnerNextMap :<c-u>call <SID>NextTextObject('i', 'f', 'InnerNextMap', '')<cr>
+noremap <silent> <plug>AroundLastMap :<c-u>call <SID>NextTextObject('a', 'F', 'AroundLastMap', '')<cr>
+noremap <silent> <plug>InnerLastMap :<c-u>call <SID>NextTextObject('i', 'F', 'InnerLastMap', '')<cr>
+
+noremap <silent> <plug>RepeatNextObject :<c-u>call <SID>RepeatNextObject()<cr>
+noremap <silent> <plug>RepeatPreviousObject :<c-u>call <SID>RepeatPreviousObject()<cr>
 
 omap an <plug>AroundNextMap
 xmap an <plug>AroundNextMap
@@ -29,8 +32,27 @@ xmap al <plug>AroundLastMap
 omap il <plug>InnerLastMap
 xmap il <plug>InnerLastMap
 
-function! s:NextTextObject(motion, dir, plugName)
-    let c = nr2char(getchar())
+xmap <c-l> <plug>RepeatNextObject
+xmap <c-h> <plug>RepeatPreviousObject
+
+let s:lastMotion = 'i'
+let s:lastTextObjType = 'b'
+
+" TODO: Clean this up
+function! s:RepeatNextObject()
+    call s:NextTextObject(s:lastMotion, 'f', '', s:lastTextObjType)
+endfunction
+
+function! s:RepeatPreviousObject()
+    call s:NextTextObject(s:lastMotion, 'F', '', s:lastTextObjType)
+endfunction
+
+function! s:NextTextObject(motion, dir, plugName, objType)
+
+    let c = a:objType
+    if empty(c)
+        let c = nr2char(getchar())
+    endif
 
     " Commented out to train on new keys, uncomment when it's learned
     "if c ==# "(" || c ==# ")" || c ==# "b" " b = brackets
@@ -57,7 +79,12 @@ function! s:NextTextObject(motion, dir, plugName)
         return
     endif
 
-    call repeat#motion("\<plug>".a:plugName.c, -1)
+    let s:lastMotion = a:motion
+    let s:lastTextObjType = c
+
+    if !empty(a:plugName)
+        call repeat#motion("\<plug>".a:plugName.c, -1)
+    endif
 endfunction
 
 function! s:CountCharsBehind(char, col, line)
