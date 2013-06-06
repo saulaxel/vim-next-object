@@ -124,10 +124,14 @@ function! s:SelectNextObject(openChar, closeChar, motion, dir)
     let matchCount = 0
 
     while 1
-        exe "normal! ".a:dir.firstChar
-
-        let lineStr = getline('.')
         let lineCol = col('.')-1
+        let lineStr = getline('.')
+
+        " Bug fix: also catch cases where it is the last character
+        if lineStr[lineCol] != firstChar
+            exe "normal! ".a:dir.firstChar
+            let lineCol = col('.')-1
+        endif
 
         if lineStr[lineCol] ==# firstChar
 
@@ -161,7 +165,7 @@ function! s:SelectNextObject(openChar, closeChar, motion, dir)
     endwhile
 
     " Check if the object is empty
-    if lineStr[lineCol+1] ==# lastChar
+    if (goForward && lineStr[lineCol+1] ==# lastChar) || (!goForward && lineStr[lineCol-1] ==# lastChar)
         " If our custom text object ends with text visually selected then that text is 
         " operated on
         " If it doesn't then vim will operate on the range from the old cursor position
@@ -170,7 +174,11 @@ function! s:SelectNextObject(openChar, closeChar, motion, dir)
         " So create a dummy character and select that.  This will allow din( to work.
         " It means that vin( will create the character but I don't see another option, 
         " also, there's no reason to do vin( if the range is empty anyway
-        exe "normal! a "
+        if goForward
+            exe "normal! a "
+        else
+            exe "normal! i "
+        endif
         exe "normal! v"
         return
     endif
