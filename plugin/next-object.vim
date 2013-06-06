@@ -74,6 +74,9 @@ function! s:NextTextObject(motion, dir, plugName, objType)
     elseif c ==# "'"
         call s:SelectNextObject(c, c, a:motion, a:dir)
 
+    elseif c ==# "g"
+        call s:SelectNextObject("<", ">", a:motion, a:dir)
+
     else 
         echom "Invalid text object"
         return
