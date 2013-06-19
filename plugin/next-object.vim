@@ -55,19 +55,15 @@ function! s:NextTextObject(motion, dir, plugName, objType)
     endif
 
     " Commented out to train on new keys, uncomment when it's learned
-    "if c ==# "(" || c ==# ")" || c ==# "b" " b = brackets
     if c ==# "b" " b = brackets
         call s:SelectNextObject("(", ")", a:motion, a:dir)
 
-    "elseif c ==# "{" || c ==# "}" || c ==# "c" " c = curly braces
     elseif c ==# "c" " c = curly braces
         call s:SelectNextObject("{", "}", a:motion, a:dir)
 
-    "elseif c ==# "[" || c ==# "]" || c ==# "r" " s is taken by sentence, r = range
     elseif c ==# "r" " s is taken by sentence, r = range
         call s:SelectNextObject("[", "]", a:motion, a:dir)
 
-    "elseif c ==# "\"" || c ==# "'"
     elseif c ==# "q"
         call s:SelectNextObject("\"", "\"", a:motion, a:dir)
 
