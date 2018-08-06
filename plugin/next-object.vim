@@ -148,7 +148,7 @@ function! s:SelectNextObject(openChar, closeChar, motion, dir)
     let l:firstChar = l:goForward ? a:openChar  : a:closeChar
     let l:lastChar  = l:goForward ? a:closeChar : a:openChar
 
-    normal! mz
+    mark z
     let l:matchCount = 0
 
     while 1
@@ -167,7 +167,6 @@ function! s:SelectNextObject(openChar, closeChar, motion, dir)
                 let l:cnt = (l:goForward ?
                         \ s:CountCharsInFront(a:openChar, l:lineCol, l:lineStr) :
                         \ s:CountCharsBehind(a:openChar, l:lineCol, l:lineStr))
-
 
                 if l:cnt % 2
                     " Odd number in front, so stop
@@ -189,6 +188,7 @@ function! s:SelectNextObject(openChar, closeChar, motion, dir)
                 normal! `z
                 delm z
                 echomsg 'No match found'
+                return
             endif
 
             if s:LastFileLine(l:goForward)
@@ -200,13 +200,16 @@ function! s:SelectNextObject(openChar, closeChar, motion, dir)
                 normal! `z
                 delm z
                 echomsg 'No match found'
+                return
             endif
         endif
 
-        if l:goForward && !l:justWrappedFile
-            normal! j0
-        else
-            normal! k$
+        if !l:justWrappedFile
+            if l:goForward
+                normal! j0
+            else
+                normal! k$
+            endif
         endif
     endwhile
 
