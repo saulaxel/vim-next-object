@@ -19,7 +19,7 @@ noremap <silent> <plug>InnerNextMap  :<c-u>call <SID>NextTextObject('i', 'f', 'I
 noremap <silent> <plug>AroundLastMap :<c-u>call <SID>NextTextObject('a', 'F', 'AroundLastMap', '')<cr>
 noremap <silent> <plug>InnerLastMap  :<c-u>call <SID>NextTextObject('i', 'F', 'InnerLastMap', '')<cr>
 
-noremap <silent> <plug>RepeatNextObject :<c-u>call <SID>RepeatNextObject()<cr>
+noremap <silent> <plug>RepeatNextObject     :<c-u>call <SID>RepeatNextObject()<cr>
 noremap <silent> <plug>RepeatPreviousObject :<c-u>call <SID>RepeatPreviousObject()<cr>
 
 if !exists('g:next_object_next_letter')
@@ -32,8 +32,8 @@ else
     execute 'omap ' . g:next_object_next_letter . 'n <plug>AroundNextMap'
     execute 'xmap ' . g:next_object_next_letter . 'n <plug>AroundNextMap'
 
-    execute 'omap ' . g:next_object_next_letter . 'i <plug>AroundNextMap'
-    execute 'xmap ' . g:next_object_next_letter . 'i <plug>AroundNextMap'
+    execute 'omap ' . g:next_object_next_letter . 'i <plug>InnerNextMap'
+    execute 'xmap ' . g:next_object_next_letter . 'i <plug>InnerNextMap'
 endif
 
 if !exists('g:next_object_prev_letter')
@@ -43,11 +43,11 @@ if !exists('g:next_object_prev_letter')
     omap il <plug>InnerLastMap
     xmap il <plug>InnerLastMap
 else
-    execute 'omap ' . g:next_object_prev_letter . 'n <plug>AroundNextMap'
-    execute 'xmap ' . g:next_object_prev_letter . 'n <plug>AroundNextMap'
+    execute 'omap ' . g:next_object_prev_letter . 'n <plug>AroundLastMap'
+    execute 'xmap ' . g:next_object_prev_letter . 'n <plug>AroundLastMap'
 
-    execute 'omap ' . g:next_object_prev_letter . 'i <plug>AroundNextMap'
-    execute 'xmap ' . g:next_object_prev_letter . 'i <plug>AroundNextMap'
+    execute 'omap ' . g:next_object_prev_letter . 'i <plug>InnerLastMap'
+    execute 'xmap ' . g:next_object_prev_letter . 'i <plug>InnerLastMap'
 endif
 
 
@@ -83,18 +83,18 @@ function! s:NextTextObject(motion, dir, plugName, objType)
 
     if stridx('b()', l:c) != -1
         call s:SelectNextObject('(', ')', a:motion, a:dir)
-    elseif stridx('{}', l:c) != -1
+    elseif stridx('cB{}', l:c) != -1
         call s:SelectNextObject('{', '}', a:motion, a:dir)
-    elseif stridx('[]', l:c) != -1
+    elseif stridx('r[]', l:c) != -1 " s is taken by sentence, r = range
         call s:SelectNextObject('[', ']', a:motion, a:dir)
-    elseif stridx('"', l:c) != -1
+    elseif stridx('q"', l:c) != -1
         call s:SelectNextObject('"', '"', a:motion, a:dir)
     elseif l:c ==# "'"
         call s:SelectNextObject("'", "'", a:motion, a:dir)
-    elseif stridx('<>', l:c) != -1
+    elseif stridx('g<>', l:c) != -1
         call s:SelectNextObject('<', '>', a:motion, a:dir)
     else
-        echom 'Invalid text object'
+        echomsg 'Invalid text object'
         return
     endif
 
@@ -116,7 +116,7 @@ function! s:CountCharsBehind(char, col, line)
 endfunction
 
 function! s:CountCharsInFront(char, col, line)
-    let l:i = strlen(a:line)-1
+    let l:i = strlen(a:line) - 1
     let l:cnt = 0
     while l:i > a:col && l:i >= 0
         if a:line[l:i] ==# a:char
@@ -133,16 +133,16 @@ function! s:SelectNextObject(openChar, closeChar, motion, dir)
     let l:firstChar = l:goForward ? a:openChar : a:closeChar
     let l:lastChar = l:goForward ? a:closeChar : a:openChar
 
-    exe 'normal! mz'
+    execute 'normal! mz'
     let l:matchCount = 0
 
     while 1
-        let l:lineCol = col('.')-1
+        let l:lineCol = col('.') - 1
         let l:lineStr = getline('.')
 
         " Bug fix: also catch cases where it is the last character
         if l:lineStr[l:lineCol] != l:firstChar
-            exe 'normal! ' . a:dir . l:firstChar
+            execute 'normal! ' . a:dir . l:firstChar
             let l:lineCol = col('.') - 1
         endif
 
@@ -165,16 +165,16 @@ function! s:SelectNextObject(openChar, closeChar, motion, dir)
         endif
 
         if (l:goForward && line('.') ==# line('$')) || (!l:goForward && line('.') == 1)
-            exe 'normal! `z'
-            exe 'delm z'
+            execute 'normal! `z'
+            execute 'delm z'
             echom 'No match found'
             return
         endif
 
         if l:goForward
-            exe 'normal! j0'
+            execute 'normal! j0'
         else
-            exe 'normal! k$'
+            execute 'normal! k$'
         endif
     endwhile
 
@@ -190,12 +190,12 @@ function! s:SelectNextObject(openChar, closeChar, motion, dir)
         " It means that vin( will create the character but I don't see another option,
         " also, there's no reason to do vin( if the range is empty anyway
         if l:goForward
-            exe 'normal! a '
+            execute 'normal! a '
         else
-            exe 'normal! i '
+            execute 'normal! i '
         endif
-        exe 'normal! v'
-        exe 'delm z'
+        execute 'normal! v'
+        execute 'delm z'
         return
     endif
 
@@ -211,10 +211,10 @@ function! s:SelectNextObject(openChar, closeChar, motion, dir)
 
         " Search again to avoid selecting the one we are in
         if l:cnt % 2
-            exe 'normal! ;'
+            execute 'normal! ;'
         endif
     endif
 
-    exe 'normal! v' . a:motion . a:openChar
-    exe 'delm z'
+    execute 'normal! v' . a:motion . a:openChar
+    execute 'delm z'
 endfunction

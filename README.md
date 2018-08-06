@@ -1,7 +1,7 @@
 Next Text Object Vim Plugin
 ========
 
-This Vim plugin allows you to search forwards or backwards text objects rather than requiring that you be inside them.  It is based on a svermeulen repository, in turn snagged from Steve Losh's vimrc, with some modifications.
+This Vim plugin allows you to search forwards or backwards text objects rather than requiring that you be inside them.  It is based on a function from Steve Losh's vimrc, with some modifications.
 
 The plugin by default uses the letters 'n', 'l' and maps <C-l> and <C-h>. This can be configured.
 
