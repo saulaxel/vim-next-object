@@ -48,7 +48,7 @@ In conjunction with operators, allows to make commands as:
 
             <C-h>
 
-        Output 1 (▒ means start and end of selection):
+        Result 1 (▒ means start and end of selection):
 
             fun1()
             {▒
@@ -64,7 +64,7 @@ In conjunction with operators, allows to make commands as:
 
             <C-l>
 
-        Output 2;
+        Result 2;
 
             fun1()
             {
