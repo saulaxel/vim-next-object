@@ -10,8 +10,8 @@ Works for the following text objects:
 
 In conjunction with operators, allows to make commands as:
  * din(   ->   delete inside next pair of bracket
- * dip}   ->   delete inside previous pair of brackets
- * dap"   ->   delete around previous string
+ * dil}   ->   delete inside previous pair of brackets
+ * dal"   ->   delete around previous string
 
 # Features
 ----------
@@ -84,22 +84,26 @@ Download repository and copy every in the corresponding folders or just use a pl
 Vundle:
 Add to your .vimrc:
 
-    Plugin 'saulaxel/vim-next-object'
+    Plugin 'svermeulen/vim-next-object'
 
 Plug:
 Add to your .vimrc:
 
-    Plug 'saulaxel/vim-next-object'
+    Plug 'svermeulen/vim-next-object'
 
 Configuration
 -------------
 
  * Change next/previous shortcuts
 
-     let g:next_object_next_letter =  'n'
+     let g:next_object_next_letter = 'n'
      let g:next_object_prev_letter = 'p'
 
  * Change shortcuts for selecting previously used objects
 
      let g:next_object_select_next = "<C-l>"
      let g:next_object_select_prev = "<C-h>"
+
+ * Let the functions wrap the file
+
+     let g:next_object_wrap_file = 1

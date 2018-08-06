@@ -29,11 +29,11 @@ if !exists('g:next_object_next_letter')
     omap in <plug>InnerNextMap
     xmap in <plug>InnerNextMap
 else
-    execute 'omap ' . g:next_object_next_letter . 'n <plug>AroundNextMap'
-    execute 'xmap ' . g:next_object_next_letter . 'n <plug>AroundNextMap'
+    execute 'omap a' . g:next_object_next_letter . ' <plug>AroundNextMap'
+    execute 'xmap a' . g:next_object_next_letter . ' <plug>AroundNextMap'
 
-    execute 'omap ' . g:next_object_next_letter . 'i <plug>InnerNextMap'
-    execute 'xmap ' . g:next_object_next_letter . 'i <plug>InnerNextMap'
+    execute 'omap i' . g:next_object_next_letter . ' <plug>InnerNextMap'
+    execute 'xmap i' . g:next_object_next_letter . ' <plug>InnerNextMap'
 endif
 
 if !exists('g:next_object_prev_letter')
@@ -43,13 +43,12 @@ if !exists('g:next_object_prev_letter')
     omap il <plug>InnerLastMap
     xmap il <plug>InnerLastMap
 else
-    execute 'omap ' . g:next_object_prev_letter . 'n <plug>AroundLastMap'
-    execute 'xmap ' . g:next_object_prev_letter . 'n <plug>AroundLastMap'
+    execute 'omap a' . g:next_object_prev_letter . ' <plug>AroundLastMap'
+    execute 'xmap a' . g:next_object_prev_letter . ' <plug>AroundLastMap'
 
-    execute 'omap ' . g:next_object_prev_letter . 'i <plug>InnerLastMap'
-    execute 'xmap ' . g:next_object_prev_letter . 'i <plug>InnerLastMap'
+    execute 'omap i' . g:next_object_prev_letter . ' <plug>InnerLastMap'
+    execute 'xmap i' . g:next_object_prev_letter . ' <plug>InnerLastMap'
 endif
-
 
 if !exists('g:next_object_select_next')
     xmap <c-l> <plug>RepeatNextObject
@@ -63,7 +62,11 @@ else
     execute 'xmap ' . g:next_object_select_prev . ' <plug>RepeatPreviousObject'
 endif
 
-let s:lastMotion = 'i'
+if !exists('g:next_object_wrap_file')
+    let g:next_object_wrap_file = 0
+endif
+
+let s:lastMotion      = 'i'
 let s:lastTextObjType = 'b'
 
 function! s:RepeatNextObject()
@@ -98,15 +101,18 @@ function! s:NextTextObject(motion, dir, plugName, objType)
         return
     endif
 
-    let s:lastMotion = a:motion
+    let s:lastMotion      = a:motion
     let s:lastTextObjType = l:c
 
+    "if !empty(a:plugName)
+    "    call repeat#motion("\<plug>" . a:plugName . l:c, -1)
+    "endif
 endfunction
 
 function! s:CountCharsBehind(char, col, line)
-    let l:i = 0
+    let l:i   = 0
     let l:cnt = 0
-    while l:i < a:col && l:i < strlen(a:line)
+    while (l:i < a:col) && (l:i < strlen(a:line))
         if a:line[l:i] ==# a:char
             let l:cnt += 1
         endif
@@ -118,7 +124,7 @@ endfunction
 function! s:CountCharsInFront(char, col, line)
     let l:i = strlen(a:line) - 1
     let l:cnt = 0
-    while l:i > a:col && l:i >= 0
+    while (l:i > a:col) && (l:i >= 0)
         if a:line[l:i] ==# a:char
             let l:cnt += 1
         endif
@@ -127,11 +133,20 @@ function! s:CountCharsInFront(char, col, line)
     return l:cnt
 endfunction
 
+function! s:LastFileLine(goForward)
+    if a:goForward
+        return line('.') == line('$')
+    else
+        return line('.') == 1
+    endif
+endfunction
+
 function! s:SelectNextObject(openChar, closeChar, motion, dir)
 
+    let l:startingLine = line('.')
     let l:goForward = (a:dir ==# 'f')
-    let l:firstChar = l:goForward ? a:openChar : a:closeChar
-    let l:lastChar = l:goForward ? a:closeChar : a:openChar
+    let l:firstChar = l:goForward ? a:openChar  : a:closeChar
+    let l:lastChar  = l:goForward ? a:closeChar : a:openChar
 
     execute 'normal! mz'
     let l:matchCount = 0
@@ -141,22 +156,25 @@ function! s:SelectNextObject(openChar, closeChar, motion, dir)
         let l:lineStr = getline('.')
 
         " Bug fix: also catch cases where it is the last character
-        if l:lineStr[l:lineCol] != l:firstChar
+        if l:lineStr[l:lineCol] !=# l:firstChar
             execute 'normal! ' . a:dir . l:firstChar
             let l:lineCol = col('.') - 1
         endif
 
         if l:lineStr[l:lineCol] ==# l:firstChar
-
             if a:openChar ==# a:closeChar
 
-                let l:cnt = s:CountCharsInFront(a:openChar, l:lineCol, l:lineStr)
+                let l:cnt = (l:goForward ?
+                        \ s:CountCharsInFront(a:openChar, l:lineCol, l:lineStr) :
+                        \ s:CountCharsBehind(a:openChar, l:lineCol, l:lineStr))
+
 
                 if l:cnt % 2
                     " Odd number in front, so stop
                     break
                 elseif l:cnt > 0
-                    " Repeat on current line
+                    " Repeat on current after advancing one char
+                    execute 'normal! ' . (l:goForward ? 'l' : 'h')
                     continue
                 endif
             else
@@ -164,14 +182,28 @@ function! s:SelectNextObject(openChar, closeChar, motion, dir)
             endif
         endif
 
-        if (l:goForward && line('.') ==# line('$')) || (!l:goForward && line('.') == 1)
-            execute 'normal! `z'
-            execute 'delm z'
-            echom 'No match found'
-            return
+        let l:justWrappedFile = 0
+        if g:next_object_wrap_file
+            if (l:goForward && line('.') + 1 == l:startingLine)
+                \ || (!l:goForward && line('.') - 1 == l:startingLine)
+                execute 'normal! `z'
+                execute 'delm z'
+                echomsg 'No match found'
+            endif
+
+            if s:LastFileLine(l:goForward)
+                execute 'normal! ' . (l:goForward ? 'gg0' : 'G$')
+                let l:justWrappedFile = 1
+            endif
+        else
+            if s:LastFileLine(l:goForward)
+                execute 'normal! `z'
+                execute 'delm z'
+                echomsg 'No match found'
+            endif
         endif
 
-        if l:goForward
+        if l:goForward && !l:justWrappedFile
             execute 'normal! j0'
         else
             execute 'normal! k$'
@@ -179,8 +211,8 @@ function! s:SelectNextObject(openChar, closeChar, motion, dir)
     endwhile
 
     " Check if the object is empty
-    if (l:goForward && l:lineStr[l:lineCol+1] ==# l:lastChar)
-                \|| (!l:goForward && l:lineStr[l:lineCol-1] ==# l:lastChar)
+    if (l:goForward && l:lineStr[l:lineCol + 1] ==# l:lastChar)
+                \|| (!l:goForward && l:lineStr[l:lineCol - 1] ==# l:lastChar)
         " If our custom text object ends with text visually selected then that text is
         " operated on
         " If it doesn't then vim will operate on the range from the old cursor position
@@ -211,7 +243,9 @@ function! s:SelectNextObject(openChar, closeChar, motion, dir)
 
         " Search again to avoid selecting the one we are in
         if l:cnt % 2
-            execute 'normal! ;'
+            " Advance to next (cant use ';' because maybe the
+            " first search has not happened)
+            execute 'normal! ' . a:dir . l:lastChar
         endif
     endif
 
