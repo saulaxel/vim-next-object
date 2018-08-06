@@ -148,7 +148,7 @@ function! s:SelectNextObject(openChar, closeChar, motion, dir)
     let l:firstChar = l:goForward ? a:openChar  : a:closeChar
     let l:lastChar  = l:goForward ? a:closeChar : a:openChar
 
-    execute 'normal! mz'
+    normal! mz
     let l:matchCount = 0
 
     while 1
@@ -186,8 +186,8 @@ function! s:SelectNextObject(openChar, closeChar, motion, dir)
         if g:next_object_wrap_file
             if (l:goForward && line('.') + 1 == l:startingLine)
                 \ || (!l:goForward && line('.') - 1 == l:startingLine)
-                execute 'normal! `z'
-                execute 'delm z'
+                normal! `z
+                delm z
                 echomsg 'No match found'
             endif
 
@@ -197,16 +197,16 @@ function! s:SelectNextObject(openChar, closeChar, motion, dir)
             endif
         else
             if s:LastFileLine(l:goForward)
-                execute 'normal! `z'
-                execute 'delm z'
+                normal! `z
+                delm z
                 echomsg 'No match found'
             endif
         endif
 
         if l:goForward && !l:justWrappedFile
-            execute 'normal! j0'
+            normal! j0
         else
-            execute 'normal! k$'
+            normal! k$
         endif
     endwhile
 
@@ -222,12 +222,12 @@ function! s:SelectNextObject(openChar, closeChar, motion, dir)
         " It means that vin( will create the character but I don't see another option,
         " also, there's no reason to do vin( if the range is empty anyway
         if l:goForward
-            execute 'normal! a '
+            normal! a
         else
-            execute 'normal! i '
+            normal! i
         endif
-        execute 'normal! v'
-        execute 'delm z'
+        normal! v
+        delm z
         return
     endif
 
@@ -250,5 +250,5 @@ function! s:SelectNextObject(openChar, closeChar, motion, dir)
     endif
 
     execute 'normal! v' . a:motion . a:openChar
-    execute 'delm z'
+    delm z
 endfunction
