@@ -84,12 +84,12 @@ Download repository and copy every in the corresponding folders or just use a pl
 Vundle:
 Add to your .vimrc:
 
-    Plugin 'svermeulen/vim-next-object'
+    Plugin 'saulaxel/vim-next-object'
 
 Plug:
 Add to your .vimrc:
 
-    Plug 'svermeulen/vim-next-object'
+    Plug 'saulaxel/vim-next-object'
 
 Configuration
 -------------
