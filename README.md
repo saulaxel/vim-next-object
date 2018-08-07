@@ -96,14 +96,16 @@ Configuration
 
  * Change next/previous shortcuts
 
-     let g:next_object_next_letter = 'n'
-     let g:next_object_prev_letter = 'p'
+        let g:next_object_next_letter = 'n'
+
+        let g:next_object_prev_letter = 'p'
 
  * Change shortcuts for selecting previously used objects
 
-     let g:next_object_select_next = "<C-l>"
-     let g:next_object_select_prev = "<C-h>"
+        let g:next_object_select_next = "<C-l>"
+
+        let g:next_object_select_prev = "<C-h>"
 
  * Let the functions wrap the file
 
-     let g:next_object_wrap_file = 1
+        let g:next_object_wrap_file = 1
