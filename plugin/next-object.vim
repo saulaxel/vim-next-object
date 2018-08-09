@@ -14,52 +14,57 @@
 
 scriptencoding utf-8
 
-noremap <silent> <plug>AroundNextMap :<c-u>call <SID>NextTextObject('a', 'f', 'AroundNextMap', '')<cr>
-noremap <silent> <plug>InnerNextMap  :<c-u>call <SID>NextTextObject('i', 'f', 'InnerNextMap', '')<cr>
-noremap <silent> <plug>AroundLastMap :<c-u>call <SID>NextTextObject('a', 'F', 'AroundLastMap', '')<cr>
-noremap <silent> <plug>InnerLastMap  :<c-u>call <SID>NextTextObject('i', 'F', 'InnerLastMap', '')<cr>
+if exists('g:next_object_loaded')
+    finish
+endif
+let g:next_object_loaded = 1
 
-noremap <silent> <plug>RepeatNextObject     :<c-u>call <SID>RepeatNextObject()<cr>
-noremap <silent> <plug>RepeatPreviousObject :<c-u>call <SID>RepeatPreviousObject()<cr>
+noremap <silent> <Plug>AroundNextMap :<C-u>call <SID>NextTextObject('a', 'f', 'AroundNextMap', '')<CR>
+noremap <silent> <Plug>InnerNextMap  :<C-u>call <SID>NextTextObject('i', 'f', 'InnerNextMap', '')<CR>
+noremap <silent> <Plug>AroundLastMap :<C-u>call <SID>NextTextObject('a', 'F', 'AroundLastMap', '')<CR>
+noremap <silent> <Plug>InnerLastMap  :<C-u>call <SID>NextTextObject('i', 'F', 'InnerLastMap', '')<CR>
+
+noremap <silent> <Plug>RepeatNextObject     :<C-u>call <SID>RepeatNextObject()<CR>
+noremap <silent> <Plug>RepeatPreviousObject :<C-u>call <SID>RepeatPreviousObject()<CR>
 
 if !exists('g:next_object_next_letter')
-    omap an <plug>AroundNextMap
-    xmap an <plug>AroundNextMap
+    omap an <Plug>AroundNextMap
+    xmap an <Plug>AroundNextMap
 
-    omap in <plug>InnerNextMap
-    xmap in <plug>InnerNextMap
+    omap in <Plug>InnerNextMap
+    xmap in <Plug>InnerNextMap
 else
-    execute 'omap a' . g:next_object_next_letter . ' <plug>AroundNextMap'
-    execute 'xmap a' . g:next_object_next_letter . ' <plug>AroundNextMap'
+    execute 'omap a' . g:next_object_next_letter . ' <Plug>AroundNextMap'
+    execute 'xmap a' . g:next_object_next_letter . ' <Plug>AroundNextMap'
 
-    execute 'omap i' . g:next_object_next_letter . ' <plug>InnerNextMap'
-    execute 'xmap i' . g:next_object_next_letter . ' <plug>InnerNextMap'
+    execute 'omap i' . g:next_object_next_letter . ' <Plug>InnerNextMap'
+    execute 'xmap i' . g:next_object_next_letter . ' <Plug>InnerNextMap'
 endif
 
 if !exists('g:next_object_prev_letter')
-    omap al <plug>AroundLastMap
-    xmap al <plug>AroundLastMap
+    omap al <Plug>AroundLastMap
+    xmap al <Plug>AroundLastMap
 
-    omap il <plug>InnerLastMap
-    xmap il <plug>InnerLastMap
+    omap il <Plug>InnerLastMap
+    xmap il <Plug>InnerLastMap
 else
-    execute 'omap a' . g:next_object_prev_letter . ' <plug>AroundLastMap'
-    execute 'xmap a' . g:next_object_prev_letter . ' <plug>AroundLastMap'
+    execute 'omap a' . g:next_object_prev_letter . ' <Plug>AroundLastMap'
+    execute 'xmap a' . g:next_object_prev_letter . ' <Plug>AroundLastMap'
 
-    execute 'omap i' . g:next_object_prev_letter . ' <plug>InnerLastMap'
-    execute 'xmap i' . g:next_object_prev_letter . ' <plug>InnerLastMap'
+    execute 'omap i' . g:next_object_prev_letter . ' <Plug>InnerLastMap'
+    execute 'xmap i' . g:next_object_prev_letter . ' <Plug>InnerLastMap'
 endif
 
 if !exists('g:next_object_select_next')
-    xmap <c-l> <plug>RepeatNextObject
+    xmap <c-l> <Plug>RepeatNextObject
 else
-    execute 'xmap ' . g:next_object_select_next . ' <plug>RepeatNextObject'
+    execute 'xmap ' . g:next_object_select_next . ' <Plug>RepeatNextObject'
 endif
 
 if !exists('g:next_object_select_prev')
-    xmap <c-h> <plug>RepeatPreviousObject
+    xmap <c-h> <Plug>RepeatPreviousObject
 else
-    execute 'xmap ' . g:next_object_select_prev . ' <plug>RepeatPreviousObject'
+    execute 'xmap ' . g:next_object_select_prev . ' <Plug>RepeatPreviousObject'
 endif
 
 if !exists('g:next_object_wrap_file')
@@ -105,7 +110,7 @@ function! s:NextTextObject(motion, dir, plugName, objType)
     let s:lastTextObjType = l:c
 
     "if !empty(a:plugName)
-    "    call repeat#motion("\<plug>" . a:plugName . l:c, -1)
+    "    call repeat#motion("\<Plug>" . a:plugName . l:c, -1)
     "endif
 endfunction
 
